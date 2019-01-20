@@ -43,7 +43,9 @@ public class Calculator {
         exp = exp.replaceAll(" ", "");
         ArrayList<String> result = new ArrayList<>();
         StringBuffer number = new StringBuffer();
-        for (char ch : exp.toCharArray()) {
+        char[] chs = exp.toCharArray();
+        for (int i = 0; i < chs.length; i++) {
+            char ch = chs[i];
             if (Character.isDigit(ch) || ch == '.') {
                 number.append(ch);
             } else if (priority(ch) >= -1) {
@@ -51,7 +53,13 @@ public class Calculator {
                     result.add(number.toString());
                     number.delete(0, number.length());
                 }
+                if (i > 0 && ch == '(' && (chs[i - 1] == ')' || priority(chs[i - 1]) < -1)) {
+                    result.add("*");
+                }
                 result.add(ch + "");
+                if (i < chs.length - 1 && ch == ')' && priority(chs[i + 1]) < -1) {
+                    result.add("*");
+                }
             } else {
                 throw new IllegalArgumentException("Invalid Input");
             }
@@ -76,8 +84,8 @@ public class Calculator {
             case '+':
             case '-':
                 return 1;
-            case '(':
             case ')':
+            case '(':
                 return -1;
             default:
                 return -3;
