@@ -53,10 +53,12 @@ public class Calculator {
                     result.add(number.toString());
                     number.delete(0, number.length());
                 }
+                // insert * when previous of '(' is ')' or is non operator
                 if (i > 0 && ch == '(' && (chs[i - 1] == ')' || priority(chs[i - 1]) < -1)) {
                     result.add("*");
                 }
                 result.add(ch + "");
+                // insert * when after of ')' is '('
                 if (i < chs.length - 1 && ch == ')' && priority(chs[i + 1]) < -1) {
                     result.add("*");
                 }
@@ -70,6 +72,9 @@ public class Calculator {
     }
 
     private static boolean isNumber(String s) {
+        // \d+ check more than one digit
+        // \.? check zero or one dot
+        // \d* check zero or more than one digit
         return s.matches("\\d+\\.?\\d*");
     }
 
@@ -160,10 +165,16 @@ public class Calculator {
         }
         double result = Double.valueOf(stack.pop());
         DecimalFormat df;
+        // \d+ check more than one digit
+        // \.? check zero or one dot
+        // \d{5,} check more than five digits
         if ((String.valueOf(result).matches("\\d+\\.?\\d{5,}"))) {
             df = new DecimalFormat("#.######");
             return df.format(result);
         }
+        // \d+ check more than one digit
+        // \.? check zero or one dot
+        // 0$ the ending is 0
         if (String.valueOf(result).matches("\\d+\\.?0$")) {
             df = new DecimalFormat("#");
             return df.format(result);
