@@ -16,6 +16,10 @@ public class Calculator {
     public static String ANSI_WHITE = "\u001B[37m";
 
     public static void main(String[] args) {
+        client();
+    }
+
+    public static void client() {
         // Windows does not support ANSI
         if (System.getProperty("os.name").startsWith("Windows")) {
             ANSI_RESET = "";
@@ -28,7 +32,7 @@ public class Calculator {
             ANSI_CYAN = "";
             ANSI_WHITE = "";
         }
-        
+
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
         String input;
         System.out.println("Welcome to my program - Calculator");
