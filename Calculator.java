@@ -5,18 +5,30 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 public class Calculator {
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_BLACK = "\u001B[30m";
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
-    public static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_PURPLE = "\u001B[35m";
-    public static final String ANSI_CYAN = "\u001B[36m";
-    public static final String ANSI_WHITE = "\u001B[37m";
+    public static String ANSI_RESET = "\u001B[0m";
+    public static String ANSI_BLACK = "\u001B[30m";
+    public static String ANSI_RED = "\u001B[31m";
+    public static String ANSI_GREEN = "\u001B[32m";
+    public static String ANSI_YELLOW = "\u001B[33m";
+    public static String ANSI_BLUE = "\u001B[34m";
+    public static String ANSI_PURPLE = "\u001B[35m";
+    public static String ANSI_CYAN = "\u001B[36m";
+    public static String ANSI_WHITE = "\u001B[37m";
 
     public static void main(String[] args) {
-
+        // Windows does not support ANSI
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            ANSI_RESET = "";
+            ANSI_BLACK = "";
+            ANSI_RED = "";
+            ANSI_GREEN = "";
+            ANSI_YELLOW = "";
+            ANSI_BLUE = "";
+            ANSI_PURPLE = "";
+            ANSI_CYAN = "";
+            ANSI_WHITE = "";
+        }
+        
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
         String input;
         System.out.println("Welcome to my program - Calculator");
@@ -42,6 +54,7 @@ public class Calculator {
             } catch (Exception e) {
                 System.out.println(ANSI_RED + "Your math expression is invalid. Please try again." + ANSI_RESET);
             }
+            System.out.println();
         }
     }
 
