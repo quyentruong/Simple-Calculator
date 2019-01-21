@@ -8,4 +8,6 @@
 
 ## Output
 
+Note: Windows does not support ANSI. It means no color in console.
+
 ![output](https://github.com/quyentruong/Simple-Calculator/blob/master/images/calculator_output.JPG?raw=true)
