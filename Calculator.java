@@ -100,6 +100,24 @@ public class Calculator {
                     ) {
                         result.add("*");
                     }
+
+                    // case: 3+-4
+//                    else if (ch == '-' && chs[i - 1] == '+') {
+//                        result.remove(result.size() - 1);
+//
+//                    }
+//
+//                    // case: 3-+4 or 3++4 or 3*+4 or 3/+4
+//                    else if (ch == '+' && priority(chs[i - 1]) >= 1) {
+//                        continue;
+//                    }
+//
+//                    // case: 3--4
+//                    else if (ch == '-' && chs[i - 1] == '-') {
+//                        result.remove(result.size() - 1);
+//                        result.add("+");
+//                        continue;
+//                    }
                 }
 
                 result.add(ch + "");
@@ -108,6 +126,7 @@ public class Calculator {
                     if ((ch == ']' || ch == ')') && priority(chs[i + 1]) < -1) {
                         result.add("*");
                     }
+
                 }
             } else {
                 throw new IllegalArgumentException("Invalid Input");
@@ -115,6 +134,20 @@ public class Calculator {
         }
         if (number.length() > 0)
             result.add(number.toString());
+
+//        for (int i = 2; i < result.size(); i++) {
+//            char previous = result.get(i - 1).charAt(0);
+//            String pre_pre = result.get(i - 2);
+//            if (isNumber(result.get(i)) && priority(previous) == 1 && !isNumber(pre_pre)) {
+//                if (previous == '-') {
+//                    result.set(i, previous + result.get(i));
+//                } else {
+//                    result.set(i, result.get(i));
+//                }
+//                result.set(i - 1, "d");
+//            }
+//        }
+//        result.
         return result;
     }
 
@@ -122,7 +155,7 @@ public class Calculator {
         // \d+ check more than one digit
         // \.? check zero or one dot
         // \d* check zero or more than one digit
-        return s.matches("\\d+\\.?\\d*");
+        return s.matches("-?\\d+\\.?\\d*");
     }
 
     private static int priority(char ch) {
