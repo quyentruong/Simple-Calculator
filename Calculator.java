@@ -2,24 +2,25 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class Calculator {
-    public static String ANSI_RESET = "\u001B[0m";
-    public static String ANSI_BLACK = "\u001B[30m";
-    public static String ANSI_RED = "\u001B[31m";
-    public static String ANSI_GREEN = "\u001B[32m";
-    public static String ANSI_YELLOW = "\u001B[33m";
-    public static String ANSI_BLUE = "\u001B[34m";
-    public static String ANSI_PURPLE = "\u001B[35m";
-    public static String ANSI_CYAN = "\u001B[36m";
-    public static String ANSI_WHITE = "\u001B[37m";
+    private static String ANSI_RESET = "\u001B[0m";
+    private static String ANSI_BLACK = "\u001B[30m";
+    private static String ANSI_RED = "\u001B[31m";
+    private static String ANSI_GREEN = "\u001B[32m";
+    private static String ANSI_YELLOW = "\u001B[33m";
+    private static String ANSI_BLUE = "\u001B[34m";
+    private static String ANSI_PURPLE = "\u001B[35m";
+    private static String ANSI_CYAN = "\u001B[36m";
+    private static String ANSI_WHITE = "\u001B[37m";
 
     public static void main(String[] args) {
         client();
     }
 
-    public static void client() {
+    private static void client() {
         // Windows does not support ANSI
         if (System.getProperty("os.name").startsWith("Windows")) {
             ANSI_RESET = "";
@@ -48,7 +49,7 @@ public class Calculator {
                 if (input.equals("stop"))
                     break;
 
-                ArrayList<String> exp = parseExp(input);
+                List<String> exp = parseExp(input);
                 String infix = String.join(" ", exp).replaceAll("\\[", "|").replaceAll("]", "|");
                 String postfix = String.join(" ", infixToPostFix(exp));
                 System.out.println("InFix: " + ANSI_PURPLE + infix + ANSI_RESET);
@@ -78,52 +79,56 @@ public class Calculator {
         return input;
     }
 
-    private static ArrayList<String> parseExp(String exp) {
+    private static List<String> parseExp(String exp) {
+        // replace all ++, --, -+, +- and spaces
+        exp = exp.replaceAll("-{2}", "+");
+        exp = exp.replaceAll("\\+{2,}", "+");
+        exp = exp.replaceAll("-\\+|\\+-", "-");
         exp = exp.replaceAll(" ", "");
-        ArrayList<String> result = new ArrayList<>();
+
+        List<String> result = new ArrayList<>();
+        Stack<String> op = new Stack<>();
         StringBuffer number = new StringBuffer();
         char[] chs = exp.toCharArray();
-        boolean abs = false;
         for (int i = 0; i < chs.length; i++) {
             char ch = chs[i];
             if (Character.isDigit(ch) || ch == '.') {
                 number.append(ch);
             } else if (priority(ch) >= -1) {
+
+                if (i == 0 && priority(ch) == 1) {
+                    result.add("0");
+                }
+
                 if (number.length() > 0) {
-                    result.add(number.toString());
+                    result.add((op.size() > 0 ? op.pop() : "") + number.toString());
                     number.delete(0, number.length());
                 }
                 // insert * when previous of '(' is ')' or is non operator
                 if (i > 0) {
-                    if ((ch == '[' || ch == '(')
-                            && (chs[i - 1] == ']' || chs[i - 1] == ')' || priority(chs[i - 1]) < -1)
+                    // convert to negative number when '-' is after (, [, *, /, ^
+                    if (ch == '-' && (priority(chs[i - 1]) >= 2 || priority(chs[i - 1]) == -1)) {
+                        op.push("-");
+                        continue;
+                    }
+
+                    // remove '+' when '+' is after (, [, *, /, ^
+                    if (ch == '+' && (priority(chs[i - 1]) >= 2 || priority(chs[i - 1]) == -1)) {
+                        continue;
+                    }
+
+
+                    if (priority(ch) == -1
+                            && (priority(chs[i - 1]) == 0 || priority(chs[i - 1]) < -1)
                     ) {
                         result.add("*");
                     }
-
-                    // case: 3+-4
-//                    else if (ch == '-' && chs[i - 1] == '+') {
-//                        result.remove(result.size() - 1);
-//
-//                    }
-//
-//                    // case: 3-+4 or 3++4 or 3*+4 or 3/+4
-//                    else if (ch == '+' && priority(chs[i - 1]) >= 1) {
-//                        continue;
-//                    }
-//
-//                    // case: 3--4
-//                    else if (ch == '-' && chs[i - 1] == '-') {
-//                        result.remove(result.size() - 1);
-//                        result.add("+");
-//                        continue;
-//                    }
                 }
 
                 result.add(ch + "");
                 // insert * when after of ')' is '('
                 if (i < chs.length - 1) {
-                    if ((ch == ']' || ch == ')') && priority(chs[i + 1]) < -1) {
+                    if (priority(ch) == 0 && priority(chs[i + 1]) < -1) {
                         result.add("*");
                     }
 
@@ -133,21 +138,8 @@ public class Calculator {
             }
         }
         if (number.length() > 0)
-            result.add(number.toString());
+            result.add((op.size() > 0 ? op.pop() : "") + number.toString());
 
-//        for (int i = 2; i < result.size(); i++) {
-//            char previous = result.get(i - 1).charAt(0);
-//            String pre_pre = result.get(i - 2);
-//            if (isNumber(result.get(i)) && priority(previous) == 1 && !isNumber(pre_pre)) {
-//                if (previous == '-') {
-//                    result.set(i, previous + result.get(i));
-//                } else {
-//                    result.set(i, result.get(i));
-//                }
-//                result.set(i - 1, "d");
-//            }
-//        }
-//        result.
         return result;
     }
 
@@ -169,9 +161,10 @@ public class Calculator {
             case '+':
             case '-':
                 return 1;
-            case '[':
             case ']':
             case ')':
+                return 0;
+            case '[':
             case '(':
                 return -1;
             default:
@@ -179,9 +172,9 @@ public class Calculator {
         }
     }
 
-    public static ArrayList<String> infixToPostFix(ArrayList<String> exp) {
+    private static List<String> infixToPostFix(List<String> exp) {
         Stack<String> stack = new Stack<>();
-        ArrayList<String> output = new ArrayList<>();
+        List<String> output = new ArrayList<>();
         for (String s : exp) {
             if (isNumber(s)) { // If s is number
                 output.add(s);
@@ -236,14 +229,14 @@ public class Calculator {
             case '/':
                 return x / y;
             case '%':
-                return x % y;
+                return Math.floorMod((long) x, (long) y);
         }
         return -1;
     }
 
-    public static String postfixExp(String exp) {
+    static String postfixExp(String exp) {
         Stack<String> stack = new Stack<>();
-        ArrayList<String> Exp = parseExp(exp);
+        List<String> Exp = parseExp(exp);
         Exp = infixToPostFix(Exp);
         for (String s : Exp) {
             if (isNumber(s)) {
