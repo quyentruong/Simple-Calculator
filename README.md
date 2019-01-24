@@ -24,6 +24,11 @@
 * Use square bracker '[]' instead of pipe '|' because it's easier to detect the ending of absolute function
 * To use binary operation, add '1' and '|' to the postfix when coverting
 
+## Test
+
+* Use JUnit 5 to run CalculatorTest.java
+* It's best if you run in Intellij
+
 ## Output
 
 Note: Windows does not support ANSI. It means no color in console.
