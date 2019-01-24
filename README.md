@@ -10,10 +10,12 @@
 
 ### Multiple Plus or Minus Sign or spaces
 
-* ------ -> use replace all with regex exact two negative signs and replace with '+'
-* +++ -> use replace all with regex more than two plus signs and replace with '+'
-* +- or -+ -> use replace all with regex +-|-+ and replace with '-'
-* '4 + 3 - 4' -> use replace all with regex ' ' and replace with ''
+Note: Follow order to filter the expression before converting
+
+1. ------ -> use replace all with regex exact two negative signs and replace with '+'
+2. +++ -> use replace all with regex more than two plus signs and replace with '+'
+3. +- or -+ -> use replace all with regex +-|-+ and replace with '-'
+4. '4 + 3 - 4' -> use replace all with regex ' ' and replace with ''
 
 ### Negative Number
 
