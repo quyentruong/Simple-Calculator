@@ -18,6 +18,13 @@ class CalculatorTest {
     }
 
     @Test
+    void absoluteExp() {
+        Assertions.assertEquals(Calculator.postfixExp("[-6]"), "6", "|-6| = 6");
+        Assertions.assertEquals(Calculator.postfixExp("[-6[-7[-8]]]"), "336", "|-6|-7|-8||| = 336");
+        Assertions.assertEquals(Calculator.postfixExp("[-6[-7(-8)]]"), "336", "|-6|-7(-8)|| = 336");
+    }
+
+    @Test
     void longExp() {
         Assertions.assertEquals(Calculator.postfixExp("5 + 2([4 - 77] - 8)+2^3"), "143", "5 + 2(|4 - 77| - 8)+2^3 = 143");
         Assertions.assertEquals(Calculator.postfixExp("3[[4-6]-22]2^3"), "480", "3||4-6|-22|2^3");
